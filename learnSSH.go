@@ -46,7 +46,7 @@ func passwdSSH(addr, username, password string, ignoreKey bool) (c *ssh.Client, 
 		Auth: []ssh.AuthMethod{
 			ssh.Password(password)},
 		// Reference: https://github.com/helloyi/go-sshclient/blob/master/sshclient.go
-		// only the pubkey is an interesting item, see: https://stackoverflow.com/questions/44269142/golang-ssh-getting-must-specify-hoskeycallback-error-despite-setting-it-to-n
+		// only the pubkey is an interesting item, see: https://stackoverflow.com/questions/44269142/golang-ssh-getting-must-specify-hoskeycallback-error-despite-setting-it-to-n/63308243#63308243
 		// If there is no trustedkey found for the target host, log a warning to advise user.
 		// The warning looks like this:
 		// 2020/10/07 15:11:07 Warning: There is no trusted key in effect, add this "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMria+C+ScdBZ6JuCAa+oeu+DiS3Z9uj4PobRtWogWDBlL2GKYqKZHzgSTN3iLpGX4d9AIAMpsqEKCyfUUyP+kA="
