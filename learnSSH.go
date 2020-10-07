@@ -5,6 +5,7 @@ I am learning how to use the ssh module and also to practise golang with things 
 One of them is doing ssh to devices.
 */
 import (
+	"bufio"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -56,6 +57,22 @@ func passwdSSH(addr, username, password string, ignoreKey bool) (c *ssh.Client, 
 	return
 }
 
+func getCmdString() (cmdString string) {
+	/*
+		Reference: https://stackoverflow.com/questions/34647039/how-to-use-fmt-scanln-read-from-a-string-separated-by-spaces
+		fmt.Scanln terminates when a space and newline is detected hence command lines with space will be truncated.
+		bufio.NewScanner.Scan() method returns true after scan, the entire text typed in stdin is stored and return as
+		string with Text() method.
+	*/
+	scan := bufio.NewScanner(os.Stdin)
+
+	fmt.Println("Command: ")
+	if scan.Scan() {
+		cmdString = scan.Text()
+	}
+	return
+}
+
 func cmd(command string, conn *ssh.Client) {
 	// Create a new session from the ssh client.
 	session, err := conn.NewSession()
@@ -83,8 +100,8 @@ func cmd(command string, conn *ssh.Client) {
 	}
 }
 
-func askForInfo() (string, string, string) {
-	var username, addr, ipAddress string
+func cmdExec() {
+	var username, addr, ipAddress, cmdString string
 	fmt.Println("\nUsername: ")
 	fmt.Scanln(&username)
 	fmt.Println("Password: ")
@@ -97,16 +114,20 @@ func askForInfo() (string, string, string) {
 
 	// fmt.Sprintf formats the string and return the formatted string.
 	addr = fmt.Sprintf("%s:22", ipAddress)
-	return addr, username, string(password)
-}
-
-func main() {
-	// Test the functions here.
-	addr, username, password := askForInfo()
-	conn, err := passwdSSH(addr, username, password, false)
+	conn, err := passwdSSH(addr, username, string(password), false)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	defer conn.Close()
-	cmd("ls -lAhF", conn)
+	cmdString = getCmdString()
+	//log.Println(cmdString)
+	if cmdString == "" {
+		log.Fatalln("Command cannot be blank.")
+	}
+	cmd(cmdString, conn)
+}
+
+func main() {
+	// Test the functions here.
+	cmdExec()
 }
