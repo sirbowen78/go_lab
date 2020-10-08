@@ -127,6 +127,9 @@ func (c *sshConfig) getSSHConfig() {
 		c.ignoreKey = true
 	} else if strings.ToUpper(ignoreKeyOpt) == "N" {
 		c.ignoreKey = false
+	} else if ignoreKeyOpt == "" {
+		c.ignoreKey = false
+		log.Println("No option chosen, default N is chosen.")
 	} else {
 		log.Fatalln("Invalid choice, must be either Y or N.")
 	}
